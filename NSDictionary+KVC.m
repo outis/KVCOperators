@@ -45,16 +45,7 @@ static void init_NSDictionary_KVC() {
 */
 #    warning "+[NSDictionary(KVC) load] may not be called before NSObject(JRSwizzle) is loaded."
 +(void)load {
-#    if defined(DBG)
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	NSError *err=NULL;
-	fprintf(stderr, "+[NSDictionary(KVC) load]\n");
-#    endif
 	[self jr_swizzleMethod:@selector(valueForKeyPath:) withMethod:@selector(other_valueForKeyPath:) error:NULL];
-
-#    if defined(DBG)
-	[pool release];
-#    endif
 }
 //#  endif
 #endif // !defined(__GNUC__)
