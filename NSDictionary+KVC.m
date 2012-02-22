@@ -77,31 +77,18 @@ static void init_NSDictionary_KVC() {
 		if ([self respondsToSelector:kvc_op]) {
 			return [self performSelector:kvc_op withObject:rest];
 		}
-		/* if this object doesn't support the operator, rely on default behavior of valueForKey:
+		/* if this object doesn't support the operator, rely on default behavior of valueForKeyPath:
 		   (which is to strip the '@' and call super's `valueForKey`).
 		 */
 	}
-	/*
-	id value;
-	if (division.location == NSNotFound) {
-		if (nil == path || [path length] == 0) {
-			value = self;
-		} else {
-			value = [self valueForKey:path];
-		}
-	} else {
-		value = [[self valueForKey:[path substringToIndex:division.location]] 
-					   valueForKeyPath:[path substringFromIndex:division.location+1]];
-	}
-	return value;
-	*/
+    // call original valueForKeyPath:
 	return [self other_valueForKeyPath:path];
 }
 
 -(id)anyObject {
 #if OBJC_API_VERSION >= 2
 	// the docs say "It is more efficient to use the fast enumeration protocol".
-	// Is it in this case?
+	// Is that true in this case?
 	for (id key in self) {
 		return [self objectForKey:key];
 	}
