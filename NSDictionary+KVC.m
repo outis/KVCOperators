@@ -1,4 +1,6 @@
 /* @(#)NSDictionary+KVC.m
+ * Released under the MIT license.
+ * See LICENSE.txt for details.
  */
 
 #import <JRSwizzle.h>

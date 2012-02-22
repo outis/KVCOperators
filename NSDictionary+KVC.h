@@ -1,4 +1,6 @@
 /* @(#)NSDictionary+KVC.h
+ * Released under the MIT license.
+ * See LICENSE.txt for details.
  */
 
 #ifndef _NSDICTIONARY_KVC_H
