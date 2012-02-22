@@ -11,10 +11,6 @@
 
 @interface NSDictionary(KVC)
 -(id)other_valueForKeyPath:(NSString*)path;
--(id)firstObject;
-
-// in combination with @dynamic, prevents complaint about unimplemented '-anyObject' method
-@property (nonatomic,readonly) id anyObject;
 @end
 /**/
 
@@ -36,14 +32,10 @@
 #endif
 
 @implementation NSDictionary (KVC)
-// prevent complaint about unimplemented method
-@dynamic anyObject;
-
 #if defined(__GNUC__)
 __attribute__((constructor))
 static void init_NSDictionary_KVC() {
 	[NSDictionary jr_swizzleMethod:@selector(valueForKeyPath:) withMethod:@selector(other_valueForKeyPath:) error:NULL];
-	[NSDictionary jr_aliasMethod:@selector(firstObject) withName:"anyObject" error:NULL];
 }
 #else // !defined(__GNUC__)
 /*
@@ -59,14 +51,8 @@ static void init_NSDictionary_KVC() {
 	fprintf(stderr, "+[NSDictionary(KVC) load]\n");
 #    endif
 	[self jr_swizzleMethod:@selector(valueForKeyPath:) withMethod:@selector(other_valueForKeyPath:) error:NULL];
-	[self jr_aliasMethod:@selector(firstObject) withName:"anyObject" error:NULL];
 
 #    if defined(DBG)
-	[self jr_aliasMethod:@selector(firstObject) withSelector:"anyObject" error:&err];
-	if (err) {
-		NSLog(@"alias error: %@", [[err userInfo] objectForKey:NSLocalizedDescriptionKey]);
-		err=NULL;
-	}
 	[pool release];
 #    endif
 }
@@ -121,9 +107,17 @@ static void init_NSDictionary_KVC() {
 	return [self other_valueForKeyPath:path];
 }
 
--(id)firstObject {
+-(id)anyObject {
+#if OBJC_API_VERSION >= 2
+	// the docs say "It is more efficient to use the fast enumeration protocol".
+	// Is it in this case?
+	for (id key in self) {
+		return [self objectForKey:key];
+	}
+#else
 	NSEnumerator *pobj = [self objectEnumerator];
 	return [pobj nextObject];
+#endif
 }
 
 -(id)_someUnionOfObjects:(id)items {

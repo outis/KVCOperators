@@ -10,7 +10,6 @@
 
 @interface NSDictionary (KVC)
 -(id)valueForKeyPath:(NSString*)path;
--(id)firstObject;
 -(id)anyObject;
 @end
 
